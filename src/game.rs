@@ -126,8 +126,8 @@ fn clear_generation(state: &mut GameState) {
 }
 
 fn step_generation(state: &mut GameState, frame: u32) {
-    for y in 0 .. state.height {
-        for x in 0 .. state.width {
+    for y in 1 .. state.height - 1 {
+        for x in 1 .. state.width - 1 {
             let neighbours = count_neighbours(state, x, y);
             let offset = (y * state.width + x) as usize;
             let value = state.gen0[offset];
@@ -278,6 +278,9 @@ fn draw_pattern(buffer: &mut ImageBuffer, cell_x: u32, cell_y: u32, cell_size: u
     for (x, y) in pattern.points {
         let point_cell_x = rx * (x - pattern.origin_x) + cell_x as i32;
         let point_cell_y = ry * (y - pattern.origin_y) + cell_y as i32;
+        if point_cell_x < 0 || point_cell_y < 0 {
+            continue;
+        }
         draw_cell(buffer, point_cell_x as u32, point_cell_y as u32, cell_size, color);
     }
 }
