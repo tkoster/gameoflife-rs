@@ -1,5 +1,4 @@
 use sdl2::event::Event;
-use sdl2::event::EventPollIterator;
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
 use sdl2::pixels::Color;
@@ -48,7 +47,7 @@ pub fn init(window_size: (u32, u32), cell_size: u32) -> GameState {
     }
 }
 
-pub fn update(frame: u32, buffer: &mut ImageBuffer, state: &mut GameState, events: EventPollIterator) -> bool {
+pub fn update<EventIterator: Iterator<Item = Event>>(frame: u32, buffer: &mut ImageBuffer, state: &mut GameState, events: EventIterator) -> bool {
     state.frame = frame;
 
     let mut should_exit = false;
