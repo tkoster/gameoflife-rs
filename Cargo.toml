@@ -9,3 +9,14 @@ opt-level = 3
 
 [dependencies]
 sdl2 = "0.34.3"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[lib]
+name = "gameoflife"
+path = "src/game.rs"
+
+[[bench]]
+name = "game-bench"
+harness = false

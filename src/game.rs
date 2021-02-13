@@ -125,7 +125,7 @@ fn clear_generation(state: &mut GameState) {
     }
 }
 
-fn step_generation(state: &mut GameState, frame: u32) {
+pub fn step_generation(state: &mut GameState, frame: u32) {
     for y in 1 .. state.height - 1 {
         for x in 1 .. state.width - 1 {
             let neighbours = count_neighbours(state, x, y);
@@ -250,7 +250,7 @@ const PATTERNS: &[&Pattern] = &[&GLIDER, &GLIDER_MISTAKE, &GLIDER_GUN];
 
 const ROTATIONS: &[(i32, i32)] = &[(1, 1), (1, -1), (-1, -1), (-1, 1)];
 
-fn draw_generation(buffer: &mut ImageBuffer, frame: u32, state: &GameState) {
+pub fn draw_generation(buffer: &mut ImageBuffer, frame: u32, state: &GameState) {
     if state.width == 0 || state.height == 0 {
         return;
     }

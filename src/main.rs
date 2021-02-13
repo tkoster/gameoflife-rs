@@ -1,5 +1,4 @@
-extern crate sdl2;
-mod game;
+use gameoflife as game;
 
 use sdl2::pixels::Color;
 use sdl2::pixels::PixelFormatEnum;
