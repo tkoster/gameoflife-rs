@@ -254,11 +254,10 @@ pub fn draw_generation(buffer: &mut ImageBuffer, frame: u32, state: &GameState) 
         return;
     }
 
-    // TODO: Draw in scanlines for better cache utilisation.
     for y in 0 .. state.height {
         for x in 0 .. state.width {
             let offset = (y * state.width + x) as usize;
-            let value = state.gen1[offset];
+            let value = unsafe { *state.gen1.get_unchecked(offset) };
             let shade: u8;
             if value > 0 {
                 let age = frame - value;
@@ -273,17 +272,20 @@ pub fn draw_generation(buffer: &mut ImageBuffer, frame: u32, state: &GameState) 
 }
 
 fn draw_pattern(buffer: &mut ImageBuffer, cell_x: u32, cell_y: u32, cell_size: u32, pattern: &Pattern, rotation: (i32, i32), color: Color) {
+    let width_cells = buffer.width as i32 / cell_size as i32;
+    let height_cells = buffer.height as i32 / cell_size as i32;
     let (rx, ry) = rotation;
     for (x, y) in pattern.points {
         let point_cell_x = rx * (x - pattern.origin_x) + cell_x as i32;
         let point_cell_y = ry * (y - pattern.origin_y) + cell_y as i32;
-        if point_cell_x < 0 || point_cell_y < 0 {
+        if point_cell_x < 0 || point_cell_y < 0 || point_cell_x >= width_cells || point_cell_y >= height_cells {
             continue;
         }
         draw_cell(buffer, point_cell_x as u32, point_cell_y as u32, cell_size, color);
     }
 }
 
+#[inline]
 fn draw_cell(buffer: &mut ImageBuffer, cell_x: u32, cell_y: u32, cell_size: u32, color: Color) {
     draw_point(buffer, cell_x * cell_size,     cell_y * cell_size,     color);
     draw_point(buffer, cell_x * cell_size + 1, cell_y * cell_size,     color);
@@ -291,10 +293,8 @@ fn draw_cell(buffer: &mut ImageBuffer, cell_x: u32, cell_y: u32, cell_size: u32,
     draw_point(buffer, cell_x * cell_size + 1, cell_y * cell_size + 1, color);
 }
 
+#[inline]
 fn draw_point(buffer: &mut ImageBuffer, x: u32, y: u32, color: Color) {
-    if x as usize >= buffer.width || y as usize >= buffer.height {
-        return;
-    }
     let offset = y as usize * buffer.pitch + x as usize * 3;
     buffer.pixels[offset]     = color.r;
     buffer.pixels[offset + 1] = color.g;
